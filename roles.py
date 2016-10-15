@@ -1,14 +1,13 @@
 #!/usr/bin/python
-import random
 
 
 class Roles:
 
-    def __init__(self,players,colors,player_ai):
-        self.players = players
-        self.colors = colors
+    def __init__(self,player_ai):
+        self.players = [1,2]
+        self.colors = ['Black','White']
         self.player_ai = player_ai #1 if the player is to be played by AI, #2 if the player is a human.
-        self.current_player = random.randint(0,len(players)-1)
+        self.current_player = 0
 
     def get_current_player(self):
         return self.current_player

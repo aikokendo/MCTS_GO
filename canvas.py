@@ -46,6 +46,7 @@ class CanvasManager:
                 obj = self.w.create_oval(newx - self.square_size / 2, newy - +self.piece_size / 2, newx + self.piece_size / 2,
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
                 self.state[y_board_pos][x_board_pos] = 1
+                print("[{0}({1},{2})]".format(self.game_roles.get_current_color(),chr(65+x_board_pos),y_board_pos))
                 self.top.update()
                 self.next_turn()
 

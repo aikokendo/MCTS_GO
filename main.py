@@ -3,11 +3,15 @@
 import tkinter
 import roles
 import canvas
+import random
+
 
 
 #initilize game variables
 
-game_roles = roles.Roles([1,2],['blue','red'],[1,0])
+ai_order = [0,0]
+ai_order[random.randint(0,1)]=1
+game_roles = roles.Roles(ai_order)
 state = [[0 for i in range(0,16)] for i in range(0,16)]
 
 w = canvas.CanvasManager(game_roles,state)
