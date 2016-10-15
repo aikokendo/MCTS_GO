@@ -31,10 +31,11 @@ class canvasManager:
         self.w = tkinter.Canvas(self.top, width=600, height=600)
         self.w.pack()
         photo = tkinter.PhotoImage(file='./board.png')
-        self.w.create_text(300,50,text="...")
+        self.status = self.w.create_text(300,50,text="...")
         self.w.create_image(300, 300, image=photo)
         self.w.bind('<Button-1>', self.OnCanvasClick)
         print(self.gameroles.GetCurrentColor())
+        self.UpdateStatus()
         self.CheckAI()
         self.top.mainloop()
 
@@ -52,8 +53,19 @@ class canvasManager:
 
     def NextTurn(self):
         self.gameroles.NextPlayer()
+        self.first = 1
         self.canvasblocked = 0
+        self.UpdateStatus()
         self.CheckAI()
+
+    def UpdateStatus(self):
+        playerstatus = "Human"
+        if self.gameroles.GetCurrentAI() == 1:
+            playerstatus = "AI"
+        self.w.itemconfig(self.status,
+                          text="Player {0} turn ({1})".format(self.gameroles.players[self.gameroles.GetCurrentPlayer()],
+                                                              playerstatus))
+        self.top.update()
 
 
     def CheckAI(self):
@@ -61,7 +73,6 @@ class canvasManager:
             self.canvasblocked = 1
             print('ai turn')
             if self.first == 0 :
-                self.first = 1
                 self.AddPiece(random.randint(7, 9), random.randint(7, 9))
             else:
                 #activate monte carlo
