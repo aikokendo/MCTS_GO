@@ -9,18 +9,18 @@ class roles:
         self.playerAI = playerAI #1 if the player is to be played by AI, #2 if the player is a human.
         self.currentPlayer = random.randint(0,len(players)-1)
 
-    def get_current_player(self):
+    def GetCurrentPlayer(self):
         return self.currentPlayer
 
-    def get_current_color(self):
+    def GetCurrentColor(self):
         return self.colors[self.currentPlayer]
 
-    def next_player(self):
+    def NextPlayer(self):
         if self.currentPlayer == len(self.players)-1:
             self.currentPlayer = 0
         else:
             self.currentPlayer += 1
 
-    def get_current_ai(self):
+    def GetCurrentAI(self):
         return self.playerAI[self.currentPlayer]
 
