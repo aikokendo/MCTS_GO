@@ -22,3 +22,4 @@ We assume Black play first, and white play the second. So you should allow the p
 
 * Alejandra Meraz
 * Luis Robles
+* 蔡洁诗

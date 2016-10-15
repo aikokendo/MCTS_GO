@@ -3,9 +3,10 @@ import random
 
 class roles:
 
-    def __init__(self,players,colors):
+    def __init__(self,players,colors,playerAI):
         self.players = players
         self.colors = colors
+        self.playerAI = playerAI #1 if the player is to be played by AI, #2 if the player is a human.
         self.currentPlayer = random.randint(0,len(players)-1)
 
     def get_current_player(self):
@@ -20,4 +21,6 @@ class roles:
         else:
             self.currentPlayer += 1
 
+    def get_current_ai(self):
+        return self.playerAI[self.currentPlayer]
 
