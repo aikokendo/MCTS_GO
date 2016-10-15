@@ -4,6 +4,7 @@ import tkinter
 import roles
 import random
 import time
+from tkinter import font
 
 
 class CanvasManager:
@@ -14,38 +15,61 @@ class CanvasManager:
             y_board_pos = round((event.y - self.y_offset) / self.square_size)
             self.add_piece(x_board_pos,y_board_pos)
 
-    def __init__(self,game_roles,state):
+    def on_player_selected(self,event):
+        if self.first == 0 and self.canvas_blocked == 1:
+            if event.x >=485 and event.x<=515:
+                self.w.create_rectangle(485,15,515,45, outline='gray')
+                self.game_roles = roles.Roles([0, 1])  # human starts
+            else:
+                self.w.create_rectangle(525,15,555,45, outline='gray')
+                self.game_roles = roles.Roles([1, 0])  # AI starts
+            self.canvas_blocked = 0
+            self.update_status()
+            self.check_ai()
+
+
+
+    def __init__(self,state):
         self.x_offset = 96  # 300px image x center position - (460px image width / 2) + 26px minor image margin up to first line
         self.y_offset = 96  # 300px image y center position - (460px image height / 2) + 26px minor image margin
         self.square_size = 27  # square size
         self.piece_size = self.square_size - 2
         self.number_of_lines = 15
-        self.canvas_blocked = 0
+        self.canvas_blocked = 1
         self.first = 0
-        self.game_roles = game_roles
         self.state = state
+        self.list_of_pieces = []
 
         self.top = tkinter.Tk(className="Gomoku! Montecarlo approach!")
-        self.top.title = "hola"
         self.w = tkinter.Canvas(self.top, width=600, height=600)
         self.w.pack()
+        self.title = self.w.create_text(80, 30, text="GOMOKU!",
+                                        font=font.Font(family='Helvetica', size=20, weight='bold'))
+        self.subtitle = self.w.create_text(400, 30, text="Please select a player:",
+                                        font=font.Font(family='Helvetica', size=12))
+        self.obj1 = self.w.create_oval(500 - self.square_size / 2, 30 - +self.piece_size / 2, 500 + self.piece_size / 2,
+                                 30 + self.piece_size / 2, fill='Black')
+        self.obj2 = self.w.create_oval(540 - self.square_size / 2, 30 - +self.piece_size / 2, 540 + self.piece_size / 2,
+                                               30 + self.piece_size / 2, fill='White')
+        self.w.tag_bind(self.obj1,'<Double-1>',self.on_player_selected)
+        self.w.tag_bind(self.obj2,'<Double-1>',self.on_player_selected)
+
         photo = tkinter.PhotoImage(file='./board.png')
-        self.status = self.w.create_text(300,50,text="...")
+        self.status = self.w.create_text(300,550,text="...")
+
         self.w.create_image(300, 300, image=photo)
         self.w.bind('<Button-1>', self.on_canvas_click)
-        self.update_status()
-        self.check_ai()
         self.top.mainloop()
 
     def add_piece(self,x_board_pos,y_board_pos):
         newx = self.x_offset + (x_board_pos) * self.square_size
         newy = self.y_offset + (y_board_pos) * self.square_size
-        if x_board_pos >= 0 and x_board_pos <= self.number_of_lines \
-                and y_board_pos >= 0 and y_board_pos <= self.number_of_lines:
+        if x_board_pos >= 0 and x_board_pos <= self.number_of_lines and y_board_pos >= 0 and y_board_pos <= self.number_of_lines:
             if self.state[y_board_pos][x_board_pos] == 0:
                 obj = self.w.create_oval(newx - self.square_size / 2, newy - +self.piece_size / 2, newx + self.piece_size / 2,
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
                 self.state[y_board_pos][x_board_pos] = 1
+                self.list_of_pieces.append(obj)
                 print("[{0}({1},{2})]".format(self.game_roles.get_current_color(),chr(65+x_board_pos),y_board_pos))
                 self.top.update()
                 self.next_turn()
@@ -58,18 +82,17 @@ class CanvasManager:
         self.check_ai()
 
     def update_status(self):
-        playerstatus = "Human"
+        player_status = "Human"
         if self.game_roles.get_current_ai() == 1:
-            playerstatus = "AI"
+            player_status = "AI"
         self.w.itemconfig(self.status,
                           text="Player {0} turn ({1})".format(self.game_roles.players[self.game_roles.get_current_player()],
-                                                              playerstatus))
+                                                              player_status))
         self.top.update()
-
 
     def check_ai(self):
         if self.game_roles.get_current_ai() == 1:
-            self.canvasblocked = 1
+            self.canvas_blocked = 1
             if self.first == 0 :
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
@@ -78,4 +101,11 @@ class CanvasManager:
                 #delete the random below
                 time.sleep(2)
                 self.add_piece(random.randint(0,15),random.randint(0,15))
+
+    def restart_game(self):
+        print(self.list_of_pieces)
+        for p in self.list_of_pieces:
+            self.w.delete(p)
+        self.list_of_pieces.clear()
+
 
