@@ -26,7 +26,7 @@ class canvasManager:
         self.state = state
 
 
-        self.top = tkinter.Tk()
+        self.top = tkinter.Tk(className="Gomoku! Montecarlo approach!")
         self.top.title = "hola"
         self.w = tkinter.Canvas(self.top, width=600, height=600)
         self.w.pack()
