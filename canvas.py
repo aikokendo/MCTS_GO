@@ -54,7 +54,7 @@ class CanvasManager:
         self.w.tag_bind(self.obj1,'<Double-1>',self.on_player_selected)
         self.w.tag_bind(self.obj2,'<Double-1>',self.on_player_selected)
 
-        photo = tkinter.PhotoImage(file='./board.png')
+        photo = tkinter.PhotoImage(file='./board.gif')
         self.status = self.w.create_text(300,550,text="...")
 
         self.w.create_image(300, 300, image=photo)
@@ -107,5 +107,3 @@ class CanvasManager:
         for p in self.list_of_pieces:
             self.w.delete(p)
         self.list_of_pieces.clear()
-
-
