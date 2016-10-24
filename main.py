@@ -17,5 +17,3 @@ state = [[0 for i in range(0,16)] for i in range(0,16)]
 w = canvas.CanvasManager(state)
 
 
-
-
