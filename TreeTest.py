@@ -2,6 +2,8 @@
 
 import node
 import montecarlo
+import roles
+import board
 
 
 #create the root
@@ -22,7 +24,11 @@ print(test_node.utility)
 print(len(test_node.children))
 
 
-montecarlo.MonteCarlo("a")
+state = [[0 for i in range(0,16)] for i in range(0,16)]
+
+board_instance = board.Board(state,None,None)
+game_roles = roles.Roles([1, 2])
+montecarlo.MonteCarlo(board_instance,game_roles)
 
 
 

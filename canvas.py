@@ -30,9 +30,9 @@ class CanvasManager:
 
 
     def __init__(self,state):
-        self.x_offset = 96  # 300px image x center position - (460px image width / 2) + 26px minor image margin up to first line
-        self.y_offset = 96  # 300px image y center position - (460px image height / 2) + 26px minor image margin
-        self.square_size = 27  # square size
+        self.x_offset = 103  # 300px image x center position - (470px image width / 2) + 38px minor image margin up to first line
+        self.y_offset = 103  # 300px image y center position - (470px image height / 2) + 38px minor image margin
+        self.square_size = 28  # square size
         self.piece_size = self.square_size - 2
         self.number_of_lines = 15
         self.canvas_blocked = 1
@@ -64,7 +64,7 @@ class CanvasManager:
     def add_piece(self,x_board_pos,y_board_pos):
         newx = self.x_offset + (x_board_pos) * self.square_size
         newy = self.y_offset + (y_board_pos) * self.square_size
-        if x_board_pos >= 0 and x_board_pos <= self.number_of_lines and y_board_pos >= 0 and y_board_pos <= self.number_of_lines:
+        if x_board_pos >= 0 and x_board_pos < self.number_of_lines and y_board_pos >= 0 and y_board_pos < self.number_of_lines:
             if self.state[y_board_pos][x_board_pos] == 0:
                 obj = self.w.create_oval(newx - self.square_size / 2, newy - +self.piece_size / 2, newx + self.piece_size / 2,
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
