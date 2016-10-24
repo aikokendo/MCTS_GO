@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import node
+import montecarlo
+
 
 #create the root
 test_node = node.Node('root',1,1, 0, 0, None, [])
@@ -20,6 +22,7 @@ print(test_node.utility)
 print(len(test_node.children))
 
 
+montecarlo.MonteCarlo("a")
 
 
 
