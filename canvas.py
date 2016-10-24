@@ -19,10 +19,10 @@ class CanvasManager:
         if self.first == 0 and self.canvas_blocked == 1:
             if event.x >=485 and event.x<=515:
                 self.w.create_rectangle(485,15,515,45, outline='gray')
-                self.game_roles = roles.Roles([0, 1])  # human starts
+                self.game_roles = roles.Roles([2, 1])  # human starts   #do not use 0
             else:
                 self.w.create_rectangle(525,15,555,45, outline='gray')
-                self.game_roles = roles.Roles([1, 0])  # AI starts
+                self.game_roles = roles.Roles([1, 2])  # AI starts      #do not use 0
             self.canvas_blocked = 0
             self.update_status()
             self.check_ai()
@@ -68,7 +68,7 @@ class CanvasManager:
             if self.state[y_board_pos][x_board_pos] == 0:
                 obj = self.w.create_oval(newx - self.square_size / 2, newy - +self.piece_size / 2, newx + self.piece_size / 2,
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
-                self.state[y_board_pos][x_board_pos] = 1
+                self.state[y_board_pos][x_board_pos] = self.game_roles.get_current_ai()  #we are using the same user id as the board pieces
                 self.list_of_pieces.append(obj)
                 print("[{0}({1},{2})]".format(self.game_roles.get_current_color(),chr(65+x_board_pos),y_board_pos))
                 self.top.update()
