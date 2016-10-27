@@ -24,7 +24,13 @@ print(test_node.utility)
 print(len(test_node.children))
 
 
-state = [[0 for i in range(0,16)] for i in range(0,16)]
+state = [[0 for i in range(0,15)] for i in range(0,15)]
+valid_moves_left = []
+for i in range(15):
+    for f in range(15):
+        valid_moves_left.append([i,f])
+
+print(valid_moves_left)
 
 board_instance = board.Board(state,None,None)
 game_roles = roles.Roles([1, 2])

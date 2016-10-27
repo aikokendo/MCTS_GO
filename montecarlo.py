@@ -35,7 +35,8 @@ class MonteCarlo:
         if board.is_terminal():
             return 1 #reward()
         for i in self.roles.player_ai:
-            board.find_legals(self.roles.get_current_ai())
+            #board.find_legals(self.roles.get_current_ai())
+            1==1
         return self.simulate(board)
 
     def back_propagation(self):
