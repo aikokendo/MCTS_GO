@@ -9,8 +9,6 @@ class Node:
         self.utility = utility
         self.parent = parent
         self.children = children
-        self.x = x
-        self.y = y
 
     def back_propagate(self,score):
         self.visits += 1
@@ -18,3 +16,4 @@ class Node:
         if self.parent is not None:
             self.parent.back_propagate(score)
 
+    def is_terminal():
