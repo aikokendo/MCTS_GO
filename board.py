@@ -3,12 +3,35 @@
 
 class Board:
 
-    def __init__(self, matrix, last_x, last_y):
-        self.matrix = matrix
-        self.last_x = last_x
-        self.last_y = last_y
+    def __init__(self):
+        self.matrix = [[0 for i in range(0,15)] for i in range(0,15)]
+        self.last_x = -1
+        self.last_y = -1
+        self.actions = set()
 
-    def add_piece(self,x,y):
+
+    def add_piece(self,x ,y, n):
+        self.matrix[x][y] = n
+        self.check_add_action(x+1,y)
+        self.check_add_action(x-1,y)
+        self.check_add_action(x,y+1)
+        self.check_add_action(x,y-1)
+        self.check_add_action(x+1,y+1)
+        self.check_add_action(x+1,y-1)
+        self.check_add_action(x-1,y+1)
+        self.check_add_action(x-1,y-1)
+        self.last_x = x
+        self.last_y = y 
+
+    def check_add_action(self,x,y):
+        if is_index_in_bounds(self,x,y)
+            if self.matrix[x][y] == 0
+                self.actions.append((x,y))
+
+    def is_index_in_bounds(self,x,y):
+        if (x <= 14 and x >= 0) and (y <= 14 and y >= 0)
+            return True
+        return False
 
     def is_terminal(self, n):
         is_terminal = False
@@ -26,7 +49,7 @@ class Board:
         for i in range(9):
             if ((lx + (i* x_add)) <= 14 and (lx + (i* x_add)) >= 0 )
             and ((ly + (i* y_add)) <= 14 and (ly + (i* y_add)) >= 0 )
-            and (matrix[lx + (i * x_add)][ly + [(i * y_add)]] == n)
+            and (self.matrix[lx + (i * x_add)][ly + [(i * y_add)]] == n)
                 k ++
                 if k >= 5
                     return True
