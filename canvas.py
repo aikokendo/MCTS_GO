@@ -5,6 +5,7 @@ import roles
 import random
 import time
 from tkinter import font
+import board
 
 
 class CanvasManager:
@@ -24,12 +25,13 @@ class CanvasManager:
                 self.w.create_rectangle(525,15,555,45, outline='gray')
                 self.game_roles = roles.Roles([1, 2])  # AI starts      #do not use 0
             self.canvas_blocked = 0
+            self.state = board.Board()
             self.update_status()
             self.check_ai()
 
 
 
-    def __init__(self,state):
+    def __init__(self):
         self.x_offset = 103  # 300px image x center position - (470px image width / 2) + 38px minor image margin up to first line
         self.y_offset = 103  # 300px image y center position - (470px image height / 2) + 38px minor image margin
         self.square_size = 28  # square size
@@ -37,7 +39,6 @@ class CanvasManager:
         self.number_of_lines = 15
         self.canvas_blocked = 1
         self.first = 0
-        self.state = state
         self.list_of_pieces = []
 
         self.top = tkinter.Tk(className="Gomoku! Montecarlo approach!")
@@ -62,21 +63,24 @@ class CanvasManager:
         self.top.mainloop()
 
     def add_piece(self,x_board_pos,y_board_pos):
+        print("adding piece ", x_board_pos, y_board_pos)
         newx = self.x_offset + (x_board_pos) * self.square_size
         newy = self.y_offset + (y_board_pos) * self.square_size
         if x_board_pos >= 0 and x_board_pos < self.number_of_lines and y_board_pos >= 0 and y_board_pos < self.number_of_lines:
-            if self.state[y_board_pos][x_board_pos] == 0:
+            if self.state.is_valid_move(x_board_pos, y_board_pos):
                 obj = self.w.create_oval(newx - self.square_size / 2, newy - +self.piece_size / 2, newx + self.piece_size / 2,
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
-                self.state[y_board_pos][x_board_pos] = self.game_roles.get_current_ai()  #we are using the same user id as the board pieces
+                self.state.add_piece(x_board_pos, y_board_pos, self.game_roles.get_current_ai())  #we are using the same user id as the board pieces
                 self.list_of_pieces.append(obj)
                 print("[{0}({1},{2})]".format(self.game_roles.get_current_color(),chr(65+x_board_pos),y_board_pos))
                 self.top.update()
                 self.next_turn()
+            else:
+                #AI tried to insert in a used place, this shouldnt happen with montecarlo,but could happen in the first turn
+                self.check_ai()
 
     def next_turn(self):
         self.game_roles.next_player()
-        self.first = 1
         self.canvas_blocked = 0
         self.update_status()
         self.check_ai()
@@ -94,13 +98,14 @@ class CanvasManager:
         if self.game_roles.get_current_ai() == 1:
             self.canvas_blocked = 1
             if self.first == 0 :
+                self.first = 1
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
                 #activate monte carlo
                 #add piece as recommended by monte carlo.
                 #delete the random below
                 time.sleep(2)
-                self.add_piece(random.randint(0,15),random.randint(0,15))
+                self.add_piece(random.randint(0,14),random.randint(0,14))
 
     def restart_game(self):
         print(self.list_of_pieces)

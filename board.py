@@ -10,7 +10,6 @@ class Board:
         self.last_y = -1
         self.actions = set()
 
-
     def add_piece(self,x ,y, n):
         self.matrix[x][y] = n
         self.check_add_action(x+1,y)
@@ -21,10 +20,9 @@ class Board:
         self.check_add_action(x+1,y-1)
         self.check_add_action(x-1,y+1)
         self.check_add_action(x-1,y-1)
+        self.actions.discard((x,y))
         self.last_x = x
         self.last_y = y
-
-
 
     def is_terminal(self, n):
         is_terminal = False
@@ -36,6 +34,8 @@ class Board:
         if(is_terminal): return True
         is_terminal = self.check_row(n,self.last_x - 4,self.last_y + 4,1,-1) # UP LEFT TO DOWN RIGHT
         if(is_terminal): return True
+        if(len(self.actions)==0) and (len(self.matrix)>1):
+            return True
 
     def check_row(self,n, lx, ly, x_add, y_add):
         k = 0
@@ -58,3 +58,6 @@ class Board:
 
     def has_actions(self):
         return len(self.actions) > 0
+
+    def is_valid_move(self,x,y):
+        return self.matrix[x][y] == 0
