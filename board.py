@@ -25,17 +25,21 @@ class Board:
         self.last_y = y
 
     def is_terminal(self, n):
+        #   0 not terminal,
+        #   1 tie,
+        #   2 won
         is_terminal = False
         is_terminal = self.check_row(n, self.last_x - 4, self.last_y, 1, 0) #LEFT TO RIGHT
-        if(is_terminal): return True
+        if(is_terminal): return 2
         is_terminal = self.check_row(n,self.last_x, self.last_y - 4, 0, 1) #DOWN TO UP
-        if(is_terminal): return True
+        if(is_terminal): return 2
         is_terminal = self.check_row(n,self.last_x - 4,self.last_y - 4,1,1) # DOWN LEFT TO UP RIGHT
-        if(is_terminal): return True
+        if(is_terminal): return 2
         is_terminal = self.check_row(n,self.last_x - 4,self.last_y + 4,1,-1) # UP LEFT TO DOWN RIGHT
-        if(is_terminal): return True
-        if(len(self.actions)==0) and (len(self.matrix)>1):
-            return True
+        if(is_terminal): return 2
+        if len(self.actions)==0:
+            return 1
+        return 0
 
     def check_row(self,n, lx, ly, x_add, y_add):
         k = 0

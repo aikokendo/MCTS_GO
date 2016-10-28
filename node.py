@@ -3,7 +3,7 @@
 
 class Node:
 
-    def __init__(self, state, x, y, visits, utility, parent, children):
+    def __init__(self, state, visits, utility, parent, children):
         self.state = state
         self.visits = visits
         self.utility = utility
