@@ -19,8 +19,9 @@ class MonteCarlo:
 
             #test
             score = self.simulate(v0.state)
-            print(score)
-        #return x, y
+            v0.back_propagate(score)
+
+            #return x, y
 
     def select(self, v):
         while not v.state.is_terminal():
