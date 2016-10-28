@@ -20,14 +20,18 @@ class MonteCarlo:
             self.simulate(v0.state)
         #return x, y
 
-        #def select(self, v):
-            #while v #is non terminal
+    def select(self, v):
+        while not v.state.is_terminal():
+            if v.state.has_actions():
+                self.expand(v)
+            else:
+                self.get_best_child()
                 #if v #is not fully expanded
                 #    return expand(v)
                 #else
         #select node for expansion based on the visit count.
 
-    def expand(self):
+    def expand(self, v):
         a=1
         #expand a selectd node by all the possible actions it has available.
 
@@ -44,3 +48,5 @@ class MonteCarlo:
     def back_propagation(self):
         a=1
         #update parents based on children simulate results
+    def get_best_child(self):
+        a = 1
