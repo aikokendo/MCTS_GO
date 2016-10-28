@@ -4,6 +4,7 @@
 class Board:
 
     def __init__(self):
+        #Creates the Board with an Matrix of 15x15 with values of 0 and an empty action set
         self.matrix = [[0 for i in range(0,15)] for i in range(0,15)]
         self.last_x = -1
         self.last_y = -1
@@ -23,12 +24,7 @@ class Board:
         self.last_x = x
         self.last_y = y
 
-    def check_add_action(self,x,y):
-        if self.is_index_in_bounds(x, y) and self.matrix[x][y] == 0:
-            self.actions.add((x,y))
 
-    def is_index_in_bounds(self,x,y):
-        return ((x <= 14 and x >= 0) and (y <= 14 and y >= 0))
 
     def is_terminal(self, n):
         is_terminal = False
@@ -52,3 +48,13 @@ class Board:
             else:
                 k = 0
         return False
+
+    def check_add_action(self,x,y):
+        if self.is_index_in_bounds(x, y) and self.matrix[x][y] == 0:
+            self.actions.add((x,y))
+
+    def is_index_in_bounds(self,x,y):
+        return ((x <= 14 and x >= 0) and (y <= 14 and y >= 0))
+
+    def has_actions(self):
+        return len(self.actions) > 0
