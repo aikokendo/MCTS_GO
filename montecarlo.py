@@ -10,18 +10,17 @@ class MonteCarlo:
     def __init__(self,state,roles):
         self.roles = roles
         # create the root
-        v0 = node.Node(state, 0, 0, None, [])
+        self.root = node.Node(state, 0, 0, None, [])
+
+
+    def best_next_move(self):
         start_time = datetime.datetime.now()
         while (datetime.datetime.now() - start_time).seconds < 1:
-            #v1 = self.select(v0)
-            #score = self.simulate(v1.state)
-            #v1.back_propagate(score)
-
-            #test
-            score = self.simulate(v0.state)
-            v0.back_propagate(score)
-
-            #return x, y
+            # v1 = self.select(self.root)
+            score = self.simulate(self.root.state)
+            self.root.back_propagate(score)
+            best_child = self.root.best_child()
+            return [best_child.state.last_x,best_child.state.last_y]
 
     def select(self, v):
         while not v.state.is_terminal():
@@ -59,8 +58,6 @@ class MonteCarlo:
          #   1==1
         #return self.simulate(board)
 
-    def back_propagation(self):
-        a=1
-        #update parents based on children simulate results
+
     def get_best_child(self):
-        a = 1
+        a = 1  #implemented in the node, will delete this function shortly when we fix dependencies

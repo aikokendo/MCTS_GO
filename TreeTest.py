@@ -35,8 +35,8 @@ test_child.back_propagate(1)
 board_instance = board.Board()
 game_roles = roles.Roles([1, 2])
 board_instance.add_piece(10,10,game_roles.get_current_ai())
-montecarlo.MonteCarlo(board_instance,game_roles)
-
+x = montecarlo.MonteCarlo(board_instance,game_roles)
+print(x.best_next_move())
 
 
 

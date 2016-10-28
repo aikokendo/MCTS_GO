@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import math
 
 class Node:
 
@@ -15,5 +16,16 @@ class Node:
         self.utility += score
         if self.parent is not None:
             self.parent.back_propagate(score)
+
+    def best_child(self):
+        score = 0
+        result = self
+        for i in self.children:
+            new_score = i.utility + math.sqrt(math.log(i.visits)/self.visits)
+            if new_score > score:
+                score = new_score
+                result = i
+        return result
+
 
 
