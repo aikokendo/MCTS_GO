@@ -6,6 +6,7 @@ import random
 import time
 from tkinter import font
 import board
+import montecarlo
 
 
 class CanvasManager:
@@ -32,10 +33,10 @@ class CanvasManager:
 
 
     def __init__(self):
-        self.x_offset = 103  # 300px image x center position - (470px image width / 2) + 38px minor image margin up to first line
-        self.y_offset = 103  # 300px image y center position - (470px image height / 2) + 38px minor image margin
-        self.square_size = 28  # square size
-        self.piece_size = self.square_size - 2
+        self.x_offset = 98  # 300px image x center position - (470px image width / 2) + 38px minor image margin up to first line
+        self.y_offset = 98  # 300px image y center position - (470px image height / 2) + 38px minor image margin
+        self.square_size = 29  # square size
+        self.piece_size = self.square_size - 4
         self.number_of_lines = 15
         self.canvas_blocked = 1
         self.first = 0
@@ -63,7 +64,6 @@ class CanvasManager:
         self.top.mainloop()
 
     def add_piece(self,x_board_pos,y_board_pos):
-        print("adding piece ", x_board_pos, y_board_pos)
         newx = self.x_offset + (x_board_pos) * self.square_size
         newy = self.y_offset + (y_board_pos) * self.square_size
         if x_board_pos >= 0 and x_board_pos < self.number_of_lines and y_board_pos >= 0 and y_board_pos < self.number_of_lines:
@@ -80,10 +80,13 @@ class CanvasManager:
                 self.check_ai()
 
     def next_turn(self):
-        self.game_roles.next_player()
-        self.canvas_blocked = 0
-        self.update_status()
-        self.check_ai()
+        if(self.state.is_terminal(self.game_roles.get_current_ai())):
+            print("winner!!")
+        else:
+            self.game_roles.next_player()
+            self.canvas_blocked = 0
+            self.update_status()
+            self.check_ai()
 
     def update_status(self):
         player_status = "Human"
@@ -101,11 +104,11 @@ class CanvasManager:
                 self.first = 1
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
-                #activate monte carlo
-                #add piece as recommended by monte carlo.
-                #delete the random below
-                time.sleep(2)
-                self.add_piece(random.randint(0,14),random.randint(0,14))
+                MCTS = montecarlo.MonteCarlo(self.state, self.game_roles)
+                move = MCTS.best_next_move()
+                x = move[0]
+                y = move[1]
+                self.add_piece(x,y)
 
     def restart_game(self):
         print(self.list_of_pieces)
