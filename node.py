@@ -11,12 +11,6 @@ class Node:
         self.parent = parent
         self.children = children
 
-    def back_propagate(self,score):
-        self.visits += 1
-        self.utility += score
-        if self.parent is not None:
-            self.parent.back_propagate(score)
-
     def best_child(self):
         score = 0
         result = self
@@ -26,6 +20,3 @@ class Node:
                 score = new_score
                 result = i
         return result
-
-
-
