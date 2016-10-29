@@ -23,18 +23,20 @@ class MonteCarlo:
             return [best_child.state.last_x,best_child.state.last_y]
 
     def select(self, v):
-        while not v.state.is_terminal():
-            if v.state.has_actions():
-                self.expand(v)
-            else:
-                self.get_best_child()
-                #if v #is not fully expanded
-                #    return expand(v)
-                #else
+        if v.state.has_actions():
+            return self.expand(v)
+        else:
+            return v.best_child()
         #select node for expansion based on the visit count.
 
     def expand(self, v):
-        a=1
+        random_action = random.sample(v.state.actions, 1)
+        simulated_board = copy.deepcopy(v.state)
+        simulated_board.add_piece(random_action[0][0],random_action[0][1],self.roles.get_current_ai())
+        v_child = node.Node(simulated_board, 0, 0, v, [])
+        v.children.append(v_child)
+        v.state.remove_action(random_action[0][0],random_action[0][1])
+        return v_child
         #expand a selectd node by all the possible actions it has available.
 
     def simulate(self, state):
@@ -58,6 +60,3 @@ class MonteCarlo:
          #   1==1
         #return self.simulate(board)
 
-
-    def get_best_child(self):
-        a = 1  #implemented in the node, will delete this function shortly when we fix dependencies

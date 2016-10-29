@@ -24,6 +24,9 @@ class Board:
         self.last_x = x
         self.last_y = y
 
+    def remove_action(self, x, y):
+        self.actions.discard((x,y))
+
     def is_terminal(self, n):
         #   0 not terminal,
         #   1 tie,
@@ -54,7 +57,7 @@ class Board:
         return False
 
     def check_add_action(self,x,y):
-        if self.is_index_in_bounds(x, y) and self.matrix[x][y] == 0:
+        if self.is_index_in_bounds(x, y) and self.is_valid_move(x,y):
             self.actions.add((x,y))
 
     def is_index_in_bounds(self,x,y):
