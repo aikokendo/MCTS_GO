@@ -23,7 +23,7 @@ class MonteCarlo:
         #create root
         root_state = copy.deepcopy(self.state)
         v0 = node.Node(root_state, 0, 0, None, [])
-        while (datetime.datetime.now() - start_time).seconds < 2:
+        while (datetime.datetime.now() - start_time).seconds < 9:
             v1 = self.select(v0)
             score = self.simulate(v1.state)
             v1.back_propagate(score)
@@ -31,18 +31,6 @@ class MonteCarlo:
         score = v0.best_child_score
         self.results.append((best_child.state.last_x,best_child.state.last_y))
         self.scores.append((best_child.state.last_x,best_child.state.last_y,score))
-
-    def best_next_move_no_thread(self):
-        start_time = datetime.datetime.now()
-        #create root
-        root_state = copy.deepcopy(self.state)
-        v0 = node.Node(root_state, 0, 0, None, [])
-        while (datetime.datetime.now() - start_time).seconds < 2:
-            v1 = self.select(v0)
-            score = self.simulate(v1.state)
-            v1.back_propagate(score)
-        best_child = v0.best_child()
-        return ((best_child.state.last_x,best_child.state.last_y))
 
     def select(self, v):
         if v.state.has_actions():
@@ -108,7 +96,7 @@ class MonteCarlo:
             move = ()
             for item in finalResult:
                 for i in self.scores:
-                    if i[0] == item[0] and i[1] == item[1] and i[2]>maxScore:
+                    if i[0] == item[0] and i[1] == item[1] and i[2]>=maxScore:
                         maxScore = i[2]
                         move = item
             finalResult.clear()

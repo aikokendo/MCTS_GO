@@ -111,7 +111,7 @@ class CanvasManager:
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
                 MCTS = montecarlo.MonteCarlo(self.state, self.game_roles)
-                move = MCTS.best_next_move_no_thread()
+                move = MCTS.best_next_move()
                 x = move[0]
                 y = move[1]
                 self.add_piece(x,y)

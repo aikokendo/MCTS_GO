@@ -40,7 +40,7 @@ class Board:
         if(is_terminal): return 2
         is_terminal = self.check_row(n,self.last_x - 4,self.last_y + 4,1,-1) # UP LEFT TO DOWN RIGHT
         if(is_terminal): return 2
-        if len(self.actions)==0:
+        if len(self.actions) == 0:
             return 1
         return 0
 

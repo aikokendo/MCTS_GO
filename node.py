@@ -15,11 +15,13 @@ class Node:
 
     def best_child(self):
         score = 0
-        result = self
+        result = None
         for i in self.children:
             new_score = i.utility + math.sqrt(math.log(i.visits)/self.visits)
             if new_score > score:
                 score = new_score
+                result = i
+            if result == None:
                 result = i
         self.best_child_score = score
         return result
