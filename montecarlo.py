@@ -4,30 +4,40 @@ import datetime
 import board
 import copy
 import random
-class MonteCarlo:
+import multiprocessing
+import threading
+from collections import Counter
 
+
+
+class MonteCarlo:
 
     def __init__(self,state,roles):
         self.roles = roles
-        # create the root
-        self.root = node.Node(state, 0, 0, None, [])
+        self.state = state
+        self.results = []
+        self.scores = []
 
-
-    def best_next_move(self):
+    def best_next_move_for_thread(self):
         start_time = datetime.datetime.now()
-        while (datetime.datetime.now() - start_time).seconds < 1:
-            # v1 = self.select(self.root)
-            score = self.simulate(self.root.state)
-            self.root.back_propagate(score)
-            best_child = self.root.best_child()
-            return [best_child.state.last_x,best_child.state.last_y]
+        #create root
+        root_state = copy.deepcopy(self.state)
+        v0 = node.Node(root_state, 0, 0, None, [])
+        while (datetime.datetime.now() - start_time).seconds < 2:
+            v1 = self.select(v0)
+            score = self.simulate(v1.state)
+            v1.back_propagate(score)
+        best_child = v0.best_child()
+        score = v0.best_child_score
+        self.results.append((best_child.state.last_x,best_child.state.last_y))
+        self.scores.append((best_child.state.last_x,best_child.state.last_y,score))
 
     def select(self, v):
         if v.state.has_actions():
             return self.expand(v)
         else:
             return v.best_child()
-        #select node for expansion based on the visit count.
+        # select node for expansion based on the visit count.
 
     def expand(self, v):
         random_action = random.sample(v.state.actions, 1)
@@ -37,11 +47,11 @@ class MonteCarlo:
         v.children.append(v_child)
         v.state.remove_action(random_action[0][0],random_action[0][1])
         return v_child
-        #expand a selectd node by all the possible actions it has available.
+        # expand a selected node by all the possible actions it has available.
 
     def simulate(self, state):
-        #simulate player movements up to getting a winner. Assign a value to the result (depthcharge)
-        #use simulate to best guess how much valuable a branch is.
+        # simulate player movements up to getting a winner. Assign a value to the result (depthcharge)
+        # use simulate to best guess how much valuable a branch is.
         simulated_board = copy.deepcopy(state)
         for i in self.roles.player_ai:
             actions = simulated_board.actions
@@ -57,6 +67,43 @@ class MonteCarlo:
                     return -100         #current player lost
         return self.simulate(simulated_board)
 
-         #   1==1
-        #return self.simulate(board)
+    def best_next_move(self):
+        processors = multiprocessing.cpu_count()
+        threads = []
+        for i in range(processors):
+            t = threading.Thread(target=self.best_next_move_for_thread)
+            threads.append(t)
+        for j in threads:
+            j.start()
+
+        for j in threads:
+            j.join()
+
+        #threads done! lets select our best next move:
+        max = 0
+        finalResult = set()
+        for item in self.results:
+            current = self.results.count(item)
+            if current > max:
+                max = current
+                finalResult.clear()
+                finalResult.add(item)
+            if current == max:
+                finalResult.add(item)
+
+        if(len(finalResult))>1:
+            maxScore = 0
+            move = ()
+            for item in finalResult:
+                for i in self.scores:
+                    if i[0] == item[0] and i[1] == item[1] and i[2]>maxScore:
+                        maxScore = i[2]
+                        move = item
+            finalResult.clear()
+            finalResult.add(move)
+        return finalResult.pop()
+
+
+
+
 

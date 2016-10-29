@@ -5,7 +5,6 @@ import montecarlo
 import roles
 import board
 
-
 #create the root
 test_node = node.Node('root', 0, 0, None, [])
 
@@ -36,7 +35,7 @@ board_instance = board.Board()
 game_roles = roles.Roles([1, 2])
 board_instance.add_piece(10,10,game_roles.get_current_ai())
 x = montecarlo.MonteCarlo(board_instance,game_roles)
-print(x.best_next_move())
+print(x.best_next_move()[0])
 
 
 
