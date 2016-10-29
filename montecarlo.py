@@ -32,6 +32,18 @@ class MonteCarlo:
         self.results.append((best_child.state.last_x,best_child.state.last_y))
         self.scores.append((best_child.state.last_x,best_child.state.last_y,score))
 
+    def best_next_move_no_thread(self):
+        start_time = datetime.datetime.now()
+        #create root
+        root_state = copy.deepcopy(self.state)
+        v0 = node.Node(root_state, 0, 0, None, [])
+        while (datetime.datetime.now() - start_time).seconds < 2:
+            v1 = self.select(v0)
+            score = self.simulate(v1.state)
+            v1.back_propagate(score)
+        best_child = v0.best_child()
+        return ((best_child.state.last_x,best_child.state.last_y))
+
     def select(self, v):
         if v.state.has_actions():
             return self.expand(v)

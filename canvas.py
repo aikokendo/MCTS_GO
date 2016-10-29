@@ -83,6 +83,7 @@ class CanvasManager:
         if(self.state.is_terminal(self.game_roles.get_current_ai())):
             self.got_a_winner()
         else:
+            self.first = 1
             self.game_roles.next_player()
             self.canvas_blocked = 0
             self.update_status()
@@ -107,11 +108,10 @@ class CanvasManager:
         if self.game_roles.get_current_ai() == 1:
             self.canvas_blocked = 1
             if self.first == 0 :
-                self.first = 1
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
                 MCTS = montecarlo.MonteCarlo(self.state, self.game_roles)
-                move = MCTS.best_next_move()
+                move = MCTS.best_next_move_no_thread()
                 x = move[0]
                 y = move[1]
                 self.add_piece(x,y)

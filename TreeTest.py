@@ -35,7 +35,7 @@ board_instance = board.Board()
 game_roles = roles.Roles([1, 2])
 board_instance.add_piece(10,10,game_roles.get_current_ai())
 x = montecarlo.MonteCarlo(board_instance,game_roles)
-print(x.best_next_move()[0])
+print(x.best_next_move_no_thread())
 
 
 
