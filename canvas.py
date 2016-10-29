@@ -81,7 +81,7 @@ class CanvasManager:
 
     def next_turn(self):
         if(self.state.is_terminal(self.game_roles.get_current_ai())):
-            print("winner!!")
+            self.got_a_winner()
         else:
             self.game_roles.next_player()
             self.canvas_blocked = 0
@@ -95,6 +95,12 @@ class CanvasManager:
         self.w.itemconfig(self.status,
                           text="Player {0} turn ({1})".format(self.game_roles.players[self.game_roles.get_current_player()],
                                                               player_status))
+        self.top.update()
+
+    def got_a_winner(self):
+        self.w.itemconfig(self.status,
+                          text="Player {0} is the WINNER!!!".format(
+                              self.game_roles.players[self.game_roles.get_current_player()]))
         self.top.update()
 
     def check_ai(self):
