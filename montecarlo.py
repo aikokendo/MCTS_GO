@@ -6,13 +6,10 @@ import copy
 import random
 import multiprocessing
 import threading
-from collections import Counter
-
 
 
 class MonteCarlo:
-
-    def __init__(self,state,roles):
+    def __init__(self, state, roles):
         self.roles = roles
         self.state = state
         self.results = []
@@ -20,52 +17,60 @@ class MonteCarlo:
 
     def best_next_move_for_thread(self):
         start_time = datetime.datetime.now()
-        #create root
+        # create root
         root_state = copy.deepcopy(self.state)
         v0 = node.Node(root_state, 0, 0, None, [])
-        while (datetime.datetime.now() - start_time).seconds < 2:
+        while (datetime.datetime.now() - start_time).seconds < 8:
             v1 = self.select(v0)
-            score = self.simulate(v1.state)
+            score = self.simulate(v1.state, 1)
             v1.back_propagate(score)
         best_child = v0.best_child()
         score = v0.best_child_score
-        self.results.append((best_child.state.last_x,best_child.state.last_y))
-        self.scores.append((best_child.state.last_x,best_child.state.last_y,score))
+        self.results.append((best_child.state.last_x, best_child.state.last_y))
+        self.scores.append((best_child.state.last_x, best_child.state.last_y, score))
 
     def select(self, v):
         if v.state.has_actions():
             return self.expand(v)
         else:
             return v.best_child()
-        # select node for expansion based on the visit count.
+            # select node for expansion based on the visit count.
 
     def expand(self, v):
         random_action = random.sample(v.state.actions, 1)
         simulated_board = copy.deepcopy(v.state)
-        simulated_board.add_piece(random_action[0][0],random_action[0][1],self.roles.get_current_ai())
+        simulated_board.add_piece(random_action[0][0], random_action[0][1], self.roles.get_current_ai())
         v_child = node.Node(simulated_board, 0, 0, v, [])
         v.children.append(v_child)
-        v.state.remove_action(random_action[0][0],random_action[0][1])
+        v.state.remove_action(random_action[0][0], random_action[0][1])
         return v_child
         # expand a selected node by all the possible actions it has available.
 
-    def simulate(self, state):
+    def simulate(self, state, level):
         # simulate player movements up to getting a winner. Assign a value to the result (depthcharge)
         # use simulate to best guess how much valuable a branch is.
-        simulated_board = copy.deepcopy(state)
-        for i in self.roles.player_ai:
-            actions = simulated_board.actions
-            random_action = random.sample(actions,1)
-            simulated_board.add_piece(random_action[0][0],random_action[0][1],i)
-            result = simulated_board.is_terminal(i)
-            if result == 1:  #tie
+        # assume expansion will call it after an action of current user
+        if level == 1:
+            result = state.is_terminal(self.roles.get_current_ai())
+            if result == 1:  # tie
                 return 0
             if result == 2:
-                if i == self.roles.get_current_ai():   #current player won
-                    return 50
+                return 100  # full reward since we are in level 1
+        simulated_board = copy.deepcopy(state)
+        players_list = self.roles.player_array_for_montecarlo()
+        for i in players_list:
+            actions = simulated_board.actions
+            random_action = random.sample(actions, 1)
+            simulated_board.add_piece(random_action[0][0], random_action[0][1], i)
+            result = simulated_board.is_terminal(i)
+            if result == 1:  # tie
+                return 0
+            if result == 2:
+                if i == self.roles.get_current_ai():  # current player won
+                    return 100 - level*2  # reduced reward based on level
                 else:
-                    return -100         #current player lost
-        return self.simulate(simulated_board)
+                    return -100  # current player lost
+        return self.simulate(simulated_board, level + 1)
 
     def best_next_move(self):
         processors = multiprocessing.cpu_count()
@@ -79,7 +84,8 @@ class MonteCarlo:
         for j in threads:
             j.join()
 
-        #threads done! lets select our best next move:
+        # threads done! lets select our best next move:
+        print(self.scores)
         max = 0
         finalResult = set()
         for item in self.results:
@@ -91,12 +97,12 @@ class MonteCarlo:
             if current == max:
                 finalResult.add(item)
 
-        if(len(finalResult))>1:
+        if (len(finalResult)) > 1:
             maxScore = 0
             move = ()
             for item in finalResult:
                 for i in self.scores:
-                    if i[0] == item[0] and i[1] == item[1] and i[2]>=maxScore:
+                    if i[0] == item[0] and i[1] == item[1] and i[2] >= maxScore:
                         maxScore = i[2]
                         move = item
             finalResult.clear()

@@ -24,3 +24,9 @@ class Roles:
     def get_current_ai(self):
         return self.player_ai[self.current_player]
 
+
+    def player_array_for_montecarlo(self):
+        if self.get_current_ai() == self.player_ai[0]:
+            return [self.player_ai[1],self.player_ai[0]]
+        else:
+            return self.player_ai
