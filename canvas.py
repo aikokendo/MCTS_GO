@@ -7,6 +7,7 @@ import time
 from tkinter import font
 import board
 import montecarlo
+import copy
 
 
 class CanvasManager:
@@ -30,24 +31,27 @@ class CanvasManager:
             self.update_status()
             self.check_ai()
 
-    def revertCallBack(self):
+    def revert_callback(self):
         if self.canvas_blocked == 0:
-            #will only be available after a AI move, so we need to revert 2 states, and 2 pieces.
-            self.stateLog.pop()
-            self.stateLog.pop()
-            if len(self.stateLog)>0:
-                self.state = self.stateLog[len(self.stateLog)-1]
-            else:
-                self.state = board.Board()
-                self.revertButton.config(state=tkinter.DISABLED)
-            #clean Listbox last 2 movements
-            self.myList.delete(self.myList.size()-2,self.myList.size()-1)
-            #clean pieces
-            piece = self.list_of_pieces.pop()
-            self.w.delete(piece)
-            piece = self.list_of_pieces.pop()
-            self.w.delete(piece)
+            terminal = self.state.is_terminal(self.game_roles.get_current_ai())
+            self.revert_one_piece()
+            if not terminal:
+                self.revert_one_piece()
+        self.update_status()
 
+
+    def revert_one_piece(self):
+        self.stateLog.pop()
+        if len(self.stateLog) > 0:
+            self.state = self.stateLog[len(self.stateLog) - 1]
+        else:
+            self.state = board.Board()
+            self.revertButton.config(state=tkinter.DISABLED)
+        # clean Listbox last movement
+        self.myList.delete(self.myList.size() - 1)
+        # clean piece
+        piece = self.list_of_pieces.pop()
+        self.w.delete(piece)
 
     def __init__(self):
         self.x_offset = 98  # 300px image x center position - (470px image width / 2) + 38px minor image margin up to first line
@@ -89,7 +93,7 @@ class CanvasManager:
         scrollbar.config(command=self.myList.yview)
 
         #revert button
-        self.revertButton = tkinter.Button(self.top,text="Revert!", command=self.revertCallBack)
+        self.revertButton = tkinter.Button(self.top,text="Revert!", command=self.revert_callback)
         self.revertButton.config(state=tkinter.DISABLED)
         self.revertButton.pack(side= tkinter.BOTTOM)
         self.top.mainloop()
@@ -105,7 +109,7 @@ class CanvasManager:
                 self.list_of_pieces.append(obj)
                 self.myList.insert(tkinter.END,"[{0} ,{1} ,{2}]".format(chr(65+y_board_pos),x_board_pos,self.game_roles.get_current_color()))
                 #Save State
-                self.stateLog.append(self.state)
+                self.stateLog.append(copy.deepcopy(self.state))
                 self.top.update()
                 self.next_turn()
             else:
