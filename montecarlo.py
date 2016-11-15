@@ -67,6 +67,8 @@ class MonteCarlo:
                 return 0
             if result == 2:
                 if i == self.roles.get_current_ai():  # current player won
+                    if level < 35:
+                        return 30
                     return 100 - level*2  # reduced reward based on level
                 else:
                     return -100  # current player lost
@@ -107,4 +109,12 @@ class MonteCarlo:
                         move = item
             finalResult.clear()
             finalResult.add(move)
+            best_move = finalResult.pop()
+            #Check if the next move is a winning move, if it isn't check for enemy threat
+            temp_state = copy.deepcopy(self.state)
+            temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
+            if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
+                self.state.check_threat()
+            return best_move
+
         return finalResult.pop()
