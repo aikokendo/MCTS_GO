@@ -13,13 +13,21 @@ class Board:
     def add_piece(self,x ,y, n):
         self.matrix[x][y] = n
         self.check_add_action(x+1,y)
+        self.check_add_action(x+2,y)
         self.check_add_action(x-1,y)
+        self.check_add_action(x-2,y)
         self.check_add_action(x,y+1)
+        self.check_add_action(x,y+2)
         self.check_add_action(x,y-1)
+        self.check_add_action(x,y-2)
         self.check_add_action(x+1,y+1)
+        self.check_add_action(x+2,y+2)
         self.check_add_action(x+1,y-1)
+        self.check_add_action(x+2,y-2)
         self.check_add_action(x-1,y+1)
+        self.check_add_action(x-2,y+2)
         self.check_add_action(x-1,y-1)
+        self.check_add_action(x-2,y-2)
         self.actions.discard((x,y))
         self.last_x = x
         self.last_y = y
@@ -43,6 +51,12 @@ class Board:
         if len(self.actions) == 0:
             return 1
         return 0
+
+    def check_threat(self):
+        #Open Three Regex /([0][1-2]{3}[0])/g
+        #Four Regex /([0]?[1]{4}[0]?)/g
+        #Split Three /([0][1]{2}[0][1][0]?)/g
+        for i in range(13):
 
     def check_row(self,n, lx, ly, x_add, y_add):
         k = 0
@@ -68,3 +82,29 @@ class Board:
 
     def is_valid_move(self,x,y):
         return self.matrix[x][y] == 0
+
+    def log_matrix(self):
+        for i in self.matrix:
+            row = ""
+            for j in i:
+                if(j == 0):
+                    row += "[ ]"
+                if(j == 1):
+                    row += "[X]"
+                if(j == 2):
+                    row += "[O]"
+            print(row)
+    def log_matrix_with_actions(self):
+        for index_x, i in enumerate(self.matrix):
+            row = ""
+            for index_y, j in enumerate(i):
+                if(j == 0):
+                    if (index_x,index_y) in self.actions:
+                        row += "[A]"
+                    else:
+                        row += "[ ]"
+                if(j == 1):
+                    row += "[X]"
+                if(j == 2):
+                    row += "[O]"
+            print(row)
