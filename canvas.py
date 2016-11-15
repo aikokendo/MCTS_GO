@@ -36,7 +36,7 @@ class CanvasManager:
             self.stateLog.pop()
             self.stateLog.pop()
             if len(self.stateLog)>0:
-                self.state = self.stateLog.pop()
+                self.state = self.stateLog[len(self.stateLog)-1]
             else:
                 self.state = board.Board()
                 self.revertButton.config(state=tkinter.DISABLED)
@@ -89,9 +89,9 @@ class CanvasManager:
         scrollbar.config(command=self.myList.yview)
 
         #revert button
-        self.revertButton = tkinter.Button(self.top,text="Revert!", command = self.revertCallBack)
+        self.revertButton = tkinter.Button(self.top,text="Revert!", command=self.revertCallBack)
         self.revertButton.config(state=tkinter.DISABLED)
-        self.revertButton.pack()
+        self.revertButton.pack(side= tkinter.BOTTOM)
         self.top.mainloop()
 
     def add_piece(self,x_board_pos,y_board_pos):
@@ -103,7 +103,7 @@ class CanvasManager:
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
                 self.state.add_piece(x_board_pos, y_board_pos, self.game_roles.get_current_ai())  #we are using the same user id as the board pieces
                 self.list_of_pieces.append(obj)
-                self.myList.insert(tkinter.END,"[{0} ,{1} ,{2}]".format(x_board_pos,chr(65+y_board_pos),self.game_roles.get_current_color()))
+                self.myList.insert(tkinter.END,"[{0} ,{1} ,{2}]".format(chr(65+y_board_pos),x_board_pos,self.game_roles.get_current_color()))
                 #Save State
                 self.stateLog.append(self.state)
                 self.top.update()
