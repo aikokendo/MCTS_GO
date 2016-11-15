@@ -30,6 +30,23 @@ class CanvasManager:
             self.update_status()
             self.check_ai()
 
+    def revertCallBack(self):
+        if self.canvas_blocked == 0:
+            #will only be available after a AI move, so we need to revert 2 states, and 2 pieces.
+            self.stateLog.pop()
+            self.stateLog.pop()
+            if len(self.stateLog)>0:
+                self.state = self.stateLog.pop()
+            else:
+                self.state = board.Board()
+                self.revertButton.config(state=tkinter.DISABLED)
+            #clean Listbox last 2 movements
+            self.myList.delete(self.myList.size()-2,self.myList.size()-1)
+            #clean pieces
+            piece = self.list_of_pieces.pop()
+            self.w.delete(piece)
+            piece = self.list_of_pieces.pop()
+            self.w.delete(piece)
 
 
     def __init__(self):
@@ -41,10 +58,12 @@ class CanvasManager:
         self.canvas_blocked = 1
         self.first = 0
         self.list_of_pieces = []
+        self.stateLog = []
+        self.state = None
 
         self.top = tkinter.Tk(className="Gomoku! Montecarlo approach!")
         self.w = tkinter.Canvas(self.top, width=600, height=600)
-        self.w.pack()
+        self.w.pack(side= tkinter.LEFT, fill=tkinter.Y)
         self.title = self.w.create_text(80, 30, text="GOMOKU!",
                                         font=font.Font(family='Helvetica', size=20, weight='bold'))
         self.subtitle = self.w.create_text(400, 30, text="Please select a player:",
@@ -58,9 +77,21 @@ class CanvasManager:
 
         photo = tkinter.PhotoImage(file='./board.gif')
         self.status = self.w.create_text(300,550,text="...")
-
         self.w.create_image(300, 300, image=photo)
         self.w.bind('<Button-1>', self.on_canvas_click)
+
+        # create a Text widget
+        scrollbar = tkinter.Scrollbar(self.top)
+        scrollbar.pack(side= tkinter.RIGHT, fill=tkinter.Y)
+        self.myList = tkinter.Listbox(self.top, yscrollcommand=scrollbar.set, selectmode=tkinter.EXTENDED,width=16)
+        self.myList.insert(1,"MOVEMENT LOG")
+        self.myList.pack(side= tkinter.RIGHT, fill=tkinter.Y)
+        scrollbar.config(command=self.myList.yview)
+
+        #revert button
+        self.revertButton = tkinter.Button(self.top,text="Revert!", command = self.revertCallBack)
+        self.revertButton.config(state=tkinter.DISABLED)
+        self.revertButton.pack()
         self.top.mainloop()
 
     def add_piece(self,x_board_pos,y_board_pos):
@@ -72,7 +103,9 @@ class CanvasManager:
                                                newy + self.piece_size / 2, fill=self.game_roles.get_current_color())
                 self.state.add_piece(x_board_pos, y_board_pos, self.game_roles.get_current_ai())  #we are using the same user id as the board pieces
                 self.list_of_pieces.append(obj)
-                print("[{0}({1},{2})]".format(self.game_roles.get_current_color(),chr(65+x_board_pos),y_board_pos))
+                self.myList.insert(tkinter.END,"[{0} ,{1} ,{2}]".format(x_board_pos,chr(65+y_board_pos),self.game_roles.get_current_color()))
+                #Save State
+                self.stateLog.append(self.state)
                 self.top.update()
                 self.next_turn()
             else:
@@ -86,6 +119,7 @@ class CanvasManager:
             self.first = 1
             self.game_roles.next_player()
             self.canvas_blocked = 0
+            self.revertButton.config(state=tkinter.NORMAL)
             self.update_status()
             self.check_ai()
 
@@ -107,6 +141,7 @@ class CanvasManager:
     def check_ai(self):
         if self.game_roles.get_current_ai() == 1:
             self.canvas_blocked = 1
+            self.revertButton.config(state=tkinter.DISABLED)
             if self.first == 0 :
                 self.add_piece(random.randint(7, 9), random.randint(7, 9))
             else:
