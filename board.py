@@ -47,9 +47,11 @@ class Board:
 
     def check_threat(self): #2 is Human, 1 is AI
         #Check if enemy has a winning move
+
         possible_threats = ["([1][2]{4}[0])","(^[2]{4}[0])", "([2]{3}[0][2])", "([2][0][2]{3})", "([2]{2}[0][2]{2})","([0][2]{4}([0-1]|$))"
-            ,"([1][0][2]{3}[0])", "(^[0][2]{3}[0])", "([0][2]{3}[0]([0-1]|$))" ,"([0][2]{2}[0][2][0-1])", "([1][2]{2}[0][2][0])"]
-        threat_counters= [5,4,3,1,2,0,5,4,0,3,3]
+            ,"([1][0][2]{3}[0])", "(^[0][2]{3}[0])", "([0][2]{3}[0]([0-1]|$))" ,"([0][2]{2}[0][2][0-1])", "([1][2]{2}[0][2][0])",
+            "([0][2][0][2]{2}[0-1])", "([1][2][0][2]{2}[0])"]
+        threat_counters= [5,4,3,1,2,0,5,4,0,3,3,2,2]
 
         expressions = [self.get_row_expression(1,0), self.get_row_expression(0,1), self.get_row_expression(1,1), self.get_row_expression(1,-1)] #Horizontal, Vertical, Diagonal1, Diagonal2
         expr_string = ["Horizontal", "Vertical", "Diagonal1", "Diagonal2"]

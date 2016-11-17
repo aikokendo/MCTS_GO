@@ -118,4 +118,3 @@ class MonteCarlo:
             if result is not None:
                 return result
         return best_move
-
