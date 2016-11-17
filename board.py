@@ -8,6 +8,8 @@ class Board:
         self.matrix = [[0 for i in range(0,15)] for i in range(0,15)]
         self.last_x = -1
         self.last_y = -1
+        self.llast_x = -1
+        self.llast_y = -1
         self.moves = 0
         self.actions = set()
 
@@ -22,12 +24,17 @@ class Board:
         self.check_add_action(x-1,y+1)
         self.check_add_action(x-1,y-1)
         self.actions.discard((x,y))
+        self.llast_x = self.last_x
+        self.llast_y = self.last_y
         self.last_x = x
         self.last_y = y
         self.moves = self.moves + 1
 
     def remove_action(self, x, y):
         self.actions.discard((x,y))
+
+    def has_action(self,x,y):
+        return (x,y) in self.actions
 
     def is_terminal(self, n):
         #   0 not terminal,
@@ -45,20 +52,29 @@ class Board:
             return 1
         return 0
 
-    def check_threat(self): #2 is Human, 1 is AI
+    def check_threat(self,forWinningThreat): #2 is Human, 1 is AI
         #Check if enemy has a winning move
+        possible_threats = None
+        mc_move = (self.llast_x, self.llast_y)
+        expressions = None
+        if forWinningThreat:
 
-        possible_threats = ["([1][2]{4}[0])","(^[2]{4}[0])", "([2]{3}[0][2])", "([2][0][2]{3})", "([2]{2}[0][2]{2})","([0][2]{4}([0-1]|$))"
-            ,"([1][0][2]{3}[0])", "(^[0][2]{3}[0])", "([0][2]{3}[0]([0-1]|$))" ,"([0][2]{2}[0][2][0-1])", "([1][2]{2}[0][2][0])",
-            "([0][2][0][2]{2}[0-1])", "([1][2][0][2]{2}[0])"]
+            possible_threats = ["([2][1]{4}[0])","(^[1]{4}[0])", "([1]{3}[0][1])", "([1][0][1]{3})", "([1]{2}[0][1]{2})","([0][1]{4}([0]|[2]|$))" ,"([2][0][1]{3}[0])", "(^[0][1]{3}[0])", "([0][1]{3}[0]([0]|[2]|$))" ,"([0][1]{2}[0][1]([0]|[2]))", "([2][1]{2}[0][1][0])","([0][1][0][1]{2}([0]|[2]))", "([2][1][0][1]{2}[0])"]
+            expressions = [self.get_row_expression_for_mc(1,0,mc_move), self.get_row_expression_for_mc(0,1,mc_move), self.get_row_expression_for_mc(1,1,mc_move), self.get_row_expression_for_mc(1,-1,mc_move)] #Horizontal, Vertical, Diagonal1, Diagonal2
+        else:
+            expressions = [self.get_row_expression(1,0), self.get_row_expression(0,1), self.get_row_expression(1,1), self.get_row_expression(1,-1)] #Horizontal, Vertical, Diagonal1, Diagonal2
+            possible_threats = ["([1][2]{4}[0])","(^[2]{4}[0])", "([2]{3}[0][2])", "([2][0][2]{3})", "([2]{2}[0][2]{2})","([0][2]{4}([0-1]|$))" ,"([1][0][2]{3}[0])", "(^[0][2]{3}[0])", "([0][2]{3}[0]([0-1]|$))" ,"([0][2]{2}[0][2][0-1])", "([1][2]{2}[0][2][0])","([0][2][0][2]{2}[0-1])", "([1][2][0][2]{2}[0])"]
         threat_counters= [5,4,3,1,2,0,5,4,0,3,3,2,2]
 
-        expressions = [self.get_row_expression(1,0), self.get_row_expression(0,1), self.get_row_expression(1,1), self.get_row_expression(1,-1)] #Horizontal, Vertical, Diagonal1, Diagonal2
         expr_string = ["Horizontal", "Vertical", "Diagonal1", "Diagonal2"]
         expr_adding = [(1,0),(0,1),(1,1),(1,-1)]
         for i in range(len(expressions)):
             for j in range(len(possible_threats)):
                 result = re.search(possible_threats[j],expressions[i][0])
+                #if forWinningThreat:
+                    #print(possible_threats[j])
+                    #print(expressions[i][0])
+                    #print(mc_move)
                 if result != None:
                     #print("Found threat in " + expr_string[i])
                     #print("result: " + result.group(0))
@@ -70,6 +86,26 @@ class Board:
         #Four Regex /([0]?[2]{4}[0]?)/g
         #Split Three /([0][2]{2}[0][2][0])/g
         #Split Three /([0][2][0][2]{2}[0])
+
+    def get_row_expression_for_mc(self,x_add,y_add, mc_move):
+        x = mc_move[0]
+        y = mc_move[1]
+        start_xy = None
+        expr = str(self.matrix[x][y])
+        #Iterates Left
+        for i in range(1,15):
+            if self.is_index_in_bounds(x - (i*x_add),y - (i*y_add)):
+                expr = str(self.matrix[x - (i*x_add)][y - (i*y_add)]) + expr
+                start_xy = ((x - (i*x_add)),(y - (i*y_add)))
+            else:
+                break
+        #Iterates Right
+        for i in range(1,15):
+            if self.is_index_in_bounds(x + (i*x_add),y + (i*y_add)):
+                expr = expr + str(self.matrix[x + (i*x_add)][y + (i*y_add)])
+            else:
+                break
+        return (expr, start_xy)
 
     def get_row_expression(self, x_add, y_add):
         x = self.last_x

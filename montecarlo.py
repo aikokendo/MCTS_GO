@@ -20,7 +20,7 @@ class MonteCarlo:
         # create root
         root_state = copy.deepcopy(self.state)
         v0 = node.Node(root_state, 0, 0, None, [])
-        while (datetime.datetime.now() - start_time).seconds < 8:
+        while (datetime.datetime.now() - start_time).seconds < 1:
             v1 = self.select(v0)
             score = self.simulate(v1.state, 1)
             v1.back_propagate(score)
@@ -39,10 +39,18 @@ class MonteCarlo:
     def expand(self, v):
         random_action = random.sample(v.state.actions, 1)
         simulated_board = copy.deepcopy(v.state)
-        simulated_board.add_piece(random_action[0][0], random_action[0][1], self.roles.get_current_ai())
+        threat_result = v.state.check_threat(True)
+        if threat_result != None:
+            print("I CAN ATTACK")
+            simulated_board.add_piece(threat_result[0],threat_result[1],self.roles.get_current_ai())
+        else:
+            simulated_board.add_piece(random_action[0][0], random_action[0][1], self.roles.get_current_ai())
         v_child = node.Node(simulated_board, 0, 0, v, [])
         v.children.append(v_child)
-        v.state.remove_action(random_action[0][0], random_action[0][1])
+        if threat_result != None:
+            v.state.remove_action(threat_result[0],threat_result[1])
+        else:
+            v.state.remove_action(random_action[0][0], random_action[0][1])
         return v_child
         # expand a selected node by all the possible actions it has available.
 
@@ -114,7 +122,7 @@ class MonteCarlo:
         temp_state = copy.deepcopy(self.state)
         temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
         if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
-            result = self.state.check_threat()
+            result = self.state.check_threat(False)
             if result is not None:
                 return result
         return best_move
