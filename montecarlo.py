@@ -100,22 +100,22 @@ class MonteCarlo:
                 finalResult.add(item)
 
         if (len(finalResult)) > 1:
-            maxScore = 0
+            max_score = 0
             move = ()
             for item in finalResult:
                 for i in self.scores:
-                    if i[0] == item[0] and i[1] == item[1] and i[2] >= maxScore:
-                        maxScore = i[2]
+                    if i[0] == item[0] and i[1] == item[1] and i[2] >= max_score:
+                        max_score = i[2]
                         move = item
             finalResult.clear()
             finalResult.add(move)
-            best_move = finalResult.pop()
-            temp_state = copy.deepcopy(self.state)
-            temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
-            if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
-                result = self.state.check_threat()
-                if result != None:
-                    return result
-            return best_move
 
-        return finalResult.pop()
+        best_move = finalResult.pop()
+        temp_state = copy.deepcopy(self.state)
+        temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
+        if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
+            result = self.state.check_threat()
+            if result is not None:
+                return result
+        return best_move
+
