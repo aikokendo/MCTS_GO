@@ -140,6 +140,7 @@ class CanvasManager:
         self.w.itemconfig(self.status,
                           text="Player {0} is the WINNER!!!".format(
                               self.game_roles.players[self.game_roles.get_current_player()]))
+        self.canvas_blocked = 1
         self.top.update()
 
     def check_ai(self):
