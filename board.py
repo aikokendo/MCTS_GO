@@ -58,8 +58,8 @@ class Board:
             for j in range(len(possible_threats)):
                 result = re.search(possible_threats[j],expressions[i][0])
                 if result != None:
-                    print("Found threat in " + expr_string[i])
-                    print("result: " + result.group(0))
+                    #print("Found threat in " + expr_string[i])
+                    #print("result: " + result.group(0))
                     x_result = expressions[i][1][0] + (result.span()[0] * expr_adding[i][0]) + (threat_counters[j] * expr_adding[i][0])
                     y_result = expressions[i][1][1] + (result.span()[0] * expr_adding[i][1]) + (threat_counters[j] * expr_adding[i][1])
                     return (x_result, y_result)
