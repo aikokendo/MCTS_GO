@@ -114,7 +114,9 @@ class MonteCarlo:
             temp_state = copy.deepcopy(self.state)
             temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
             if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
-                self.state.check_threat()
+                result = self.state.check_threat()
+                if result != None:
+                    return result
             return best_move
 
         return finalResult.pop()
