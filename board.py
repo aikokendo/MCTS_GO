@@ -47,15 +47,19 @@ class Board:
 
     def check_threat(self): #2 is Human, 1 is AI
         #Check if enemy has a winning move
-        possible_threats = ["([1][2]{4}[0])","(^[2]{4}[0])", "([2]{3}[0][2])", "([2][0][2]{3})", "([2]{2}[0][2]{2})","([0][2]{4}([0-1]|$))"]
-        threat_counters= [5,4,3,1,2,0]
+        possible_threats = ["([1][2]{4}[0])","(^[2]{4}[0])", "([2]{3}[0][2])", "([2][0][2]{3})", "([2]{2}[0][2]{2})","([0][2]{4}([0-1]|$))"
+            ,"([1][0][2]{3}[0])", "(^[0][2]{3}[0])", "([0][2]{3}[0]([0-1]|$))" ,"([0][2]{2}[0][2][0-1])", "([1][2]{2}[0][2][0])"]
+        threat_counters= [5,4,3,1,2,0,5,4,0,3,3]
+
         expressions = [self.get_row_expression(1,0), self.get_row_expression(0,1), self.get_row_expression(1,1), self.get_row_expression(1,-1)] #Horizontal, Vertical, Diagonal1, Diagonal2
+        expr_string = ["Horizontal", "Vertical", "Diagonal1", "Diagonal2"]
         expr_adding = [(1,0),(0,1),(1,1),(1,-1)]
         for i in range(len(expressions)):
             for j in range(len(possible_threats)):
                 result = re.search(possible_threats[j],expressions[i][0])
                 if result != None:
-                    print("Found threat")
+                    print("Found threat in " + expr_string[i])
+                    print("result: " + result.group(0))
                     x_result = expressions[i][1][0] + (result.span()[0] * expr_adding[i][0]) + (threat_counters[j] * expr_adding[i][0])
                     y_result = expressions[i][1][1] + (result.span()[0] * expr_adding[i][1]) + (threat_counters[j] * expr_adding[i][1])
                     return (x_result, y_result)

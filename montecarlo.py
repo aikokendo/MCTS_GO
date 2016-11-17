@@ -110,7 +110,6 @@ class MonteCarlo:
             finalResult.clear()
             finalResult.add(move)
             best_move = finalResult.pop()
-            #Check if the next move is a winning move, if it isn't check for enemy threat
             temp_state = copy.deepcopy(self.state)
             temp_state.add_piece(best_move[0],best_move[1], self.roles.get_current_ai())
             if temp_state.is_terminal(self.roles.get_current_ai()) != 2:
