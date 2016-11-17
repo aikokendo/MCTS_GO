@@ -20,6 +20,6 @@ We assume Black play first, and white play the second. So you should allow the p
 
 ## Project Members
 
-* Alejandra Meraz
-* Luis Robles
+* 亞琳娜
+* 林文智
 * 蔡洁诗
